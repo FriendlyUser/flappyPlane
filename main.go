@@ -39,6 +39,7 @@ import (
 	raudio "github.com/hajimehoshi/ebiten/examples/resources/audio"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	resources "github.com/hajimehoshi/ebiten/examples/resources/images/flappy"
+	images "github.com/FriendlyUser/flappyPlane/images"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
 )
@@ -74,6 +75,7 @@ const (
 var (
 	gopherImage     *ebiten.Image
 	tilesImage      *ebiten.Image
+	planesImage     *ebiten.Image
 	arcadeFont      font.Face
 	smallArcadeFont font.Face
 )
@@ -86,6 +88,12 @@ func init() {
 	gopherImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 
 	img, _, err = image.Decode(bytes.NewReader(resources.Tiles_png))
+	if err != nil {
+		log.Fatal(err)
+	}
+	tilesImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+
+	img, _, err = image.Decode(bytes.NewReader(images.planes_png))
 	if err != nil {
 		log.Fatal(err)
 	}
