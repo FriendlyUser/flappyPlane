@@ -7,11 +7,8 @@ import (
 
 var (
         running bool
-)
-
-const (
-        ScreenWidth  = 320
-        ScreenHeight = 240
+        ScreenHeight int 
+        ScreenWidth  int
 )
 
 // IsRunning returns a boolean value indicating whether the game is running.
@@ -19,13 +16,19 @@ func IsRunning() bool {
         return running
 }
 
+func getWidth() int {
+        return ScreenWidth
+}
+
+func getHeight() int {
+        return ScreenHeight
+}
 // Start starts the game.
-func Start(scale float64) error {
+func Start(scale float64, Width int, Height int) error {
         running = true
-        game, err := yourgame.NewGame()
-        if err != nil {
-                return err
-        }
+        game := flappyPlane.NewGame()
+        ScreenHeight = Height 
+        ScreenWidth = Width
         // mobile.Start starts the game.
         // In this function, scale is passed from Java/Objecitve-C side
         // and pass it to mobile.Start. You can also receive the screen
@@ -34,7 +37,7 @@ func Start(scale float64) error {
         // screen size.
         // Note that the screen size unit is dp (device-independent pixel)
         // on Android.
-        if err := mobile.Start(game.Update, ScreenWidth, ScreenHeight, scale, "Your Game's Title"); err != nil {
+        if err := mobile.Start(game.Update, Width, Height, scale, "Flappy Plane"); err != nil {
                 return err
         }
         return nil

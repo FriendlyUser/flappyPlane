@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build example jsgo
-
+// +build !debug
 package flappyPlane
 
 import (
@@ -83,7 +82,6 @@ const (
 )
 
 var (
-	gopherImage     *ebiten.Image
 	tilesImage      *ebiten.Image
 	planesImage     *ebiten.Image
 	arcadeFont      font.Face
@@ -92,13 +90,8 @@ var (
 )
 
 func init() {
-	img, _, err := image.Decode(bytes.NewReader(resources.Gopher_png))
-	if err != nil {
-		log.Fatal(err)
-	}
-	gopherImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 
-	img, _, err = image.Decode(bytes.NewReader(resources.Tiles_png))
+	img, _, err := image.Decode(bytes.NewReader(resources.Tiles_png))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -185,7 +178,7 @@ const (
 type Game struct {
 	mode Mode
 
-	// The gopher's position
+	// The plane's position
 	x16  int
 	y16  int
 	vy16 int
@@ -275,12 +268,12 @@ func (g *Game) Update(screen *ebiten.Image) error {
 	screen.Fill(color.RGBA{0x80, 0xa0, 0xc0, 0xff})
 	g.drawTiles(screen)
 	if g.mode != ModeTitle {
-		g.drawGopher(screen)
+		g.drawPlane(screen)
 	}
 	var texts []string
 	switch g.mode {
 	case ModeTitle:
-		texts = []string{"FLAPPY GOPHER", "", "", "", "", "PRESS SPACE KEY", "", "OR TOUCH SCREEN"}
+		texts = []string{"FLAPPY PLANE", "", "", "", "", "PRESS SPACE KEY", "", "OR TOUCH SCREEN"}
 	case ModeGameOver:
 		texts = []string{"", "GAMEOVER!"}
 	}
@@ -291,8 +284,8 @@ func (g *Game) Update(screen *ebiten.Image) error {
 
 	if g.mode == ModeTitle {
 		msg := []string{
-			"Go Gopher by Renee French is",
-			"licenced under CC BY 3.0.",
+			"Game Created Using Ebiten",
+			"Created By David Li.",
 		}
 		for i, l := range msg {
 			x := (screenWidth - len(l)*smallFontSize) / 2
@@ -330,13 +323,13 @@ func (g *Game) hit() bool {
 		return false
 	}
 	const (
-		gopherWidth  = 30
-		gopherHeight = 30
+		planeWidth  = 30
+		planeHeight = 30
 	)
-	x0 := floorDiv(g.x16, 16) + (32-gopherWidth)/2
-	y0 := floorDiv(g.y16, 16) + (32-gopherHeight)/2
-	x1 := x0 + gopherWidth
-	y1 := y0 + gopherHeight
+	x0 := floorDiv(g.x16, 16) + (32-planeWidth)/2
+	y0 := floorDiv(g.y16, 16) + (32-planeHeight)/2
+	x1 := x0 + planeWidth
+	y1 := y0 + planeHeight
 	if y0 < -tileSize*4 {
 		return true
 	}
@@ -344,7 +337,7 @@ func (g *Game) hit() bool {
 		return true
 	}
 	xMin := floorDiv(x0-pipeWidth, tileSize)
-	xMax := floorDiv(x0+gopherWidth, tileSize)
+	xMax := floorDiv(x0+planeWidth, tileSize)
 	for x := xMin; x <= xMax; x++ {
 		y, ok := g.pipeAt(x)
 		if !ok {
@@ -414,7 +407,7 @@ func (g *Game) drawTiles(screen *ebiten.Image) {
 	}
 }
 
-func (g *Game) drawGopher(screen *ebiten.Image) {
+func (g *Game) drawPlane(screen *ebiten.Image) {
 	count++
 	op := &ebiten.DrawImageOptions{}
 	w := 32 
@@ -436,7 +429,7 @@ func main() {
 	if runtime.GOARCH == "js" || runtime.GOOS == "js" {
 		ebiten.SetFullscreen(true)
 	}
-	if err := ebiten.Run(g.Update, screenWidth, screenHeight, 1, "Flappy Gopher (Ebiten Demo)"); err != nil {
+	if err := ebiten.Run(g.Update, screenWidth, screenHeight, 1, "Bad Flappy Plane"); err != nil {
 		panic(err)
 	}
 }
