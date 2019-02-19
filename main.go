@@ -35,11 +35,12 @@ import (
 	"github.com/hajimehoshi/ebiten/audio"
 	"github.com/hajimehoshi/ebiten/audio/vorbis"
 	"github.com/hajimehoshi/ebiten/audio/wav"
+	// "github.com/hajimehoshi/ebiten/audio/mp3"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	raudio "github.com/hajimehoshi/ebiten/examples/resources/audio"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	resources "github.com/hajimehoshi/ebiten/examples/resources/images/flappy"
-	audio "github.com/FriendlyUser/flappyPlane/audio"
+	// saudio "github.com/FriendlyUser/flappyPlane/audio"
 	images "github.com/FriendlyUser/flappyPlane/images"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
@@ -77,6 +78,8 @@ const (
 	frameWidth  = 85
 	frameHeight = 74
 	frameNum    = 3
+
+	loopLengthInSecond  = 17
 )
 
 var (
@@ -130,10 +133,11 @@ var (
 	audioContext *audio.Context
 	jumpPlayer   *audio.Player
 	hitPlayer    *audio.Player
+	musicPlayer  *audio.Player
 )
 
 func init() {
-	audioContext, _ = audio.NewContext(44100)
+	audioContext, _ = audio.NewContext(22050)
 
 	jumpD, err := vorbis.Decode(audioContext, audio.BytesReadSeekCloser(raudio.Jump_ogg))
 	if err != nil {
@@ -279,7 +283,7 @@ func (g *Game) Update(screen *ebiten.Image) error {
 			text.Draw(screen, l, smallArcadeFont, x, screenHeight-4+(i-1)*smallFontSize, color.White)
 		}
 	}
-
+	
 	scoreStr := fmt.Sprintf("%04d", g.score())
 	text.Draw(screen, scoreStr, arcadeFont, screenWidth-len(scoreStr)*fontSize, fontSize, color.White)
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
