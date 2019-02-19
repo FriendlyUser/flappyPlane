@@ -9,7 +9,7 @@
 
     <application
         android:label="FlappyPlane"
-        android:debuggable="false">
+        android:debuggable="true">
 
         <activity
             android:label="FlappyPlane"
