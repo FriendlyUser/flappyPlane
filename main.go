@@ -33,14 +33,14 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/audio"
-	"github.com/hajimehoshi/ebiten/audio/vorbis"
+	// "github.com/hajimehoshi/ebiten/audio/vorbis"
 	"github.com/hajimehoshi/ebiten/audio/wav"
-	// "github.com/hajimehoshi/ebiten/audio/mp3"
+	"github.com/hajimehoshi/ebiten/audio/mp3"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
-	raudio "github.com/hajimehoshi/ebiten/examples/resources/audio"
+	// raudio "github.com/hajimehoshi/ebiten/examples/resources/audio"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	resources "github.com/hajimehoshi/ebiten/examples/resources/images/flappy"
-	// saudio "github.com/FriendlyUser/flappyPlane/audio"
+	saudio "github.com/FriendlyUser/flappyPlane/music"
 	images "github.com/FriendlyUser/flappyPlane/images"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
@@ -139,7 +139,7 @@ var (
 func init() {
 	audioContext, _ = audio.NewContext(22050)
 
-	jumpD, err := vorbis.Decode(audioContext, audio.BytesReadSeekCloser(raudio.Jump_ogg))
+	jumpD, err := wav.Decode(audioContext, audio.BytesReadSeekCloser(saudio.Jump_wav))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -148,7 +148,7 @@ func init() {
 		log.Fatal(err)
 	}
 
-	jabD, err := wav.Decode(audioContext, audio.BytesReadSeekCloser(raudio.Jab_wav))
+	jabD, err := wav.Decode(audioContext, audio.BytesReadSeekCloser(saudio.Lavad_wav))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -156,6 +156,22 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+  oggS, err := mp3.Decode(audioContext, audio.BytesReadSeekCloser(saudio.Beats_mp3))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+  // Create an infinite loop stream from the decoded bytes.
+  // s is still an io.ReadCloser and io.Seeker.
+  s := audio.NewInfiniteLoop(oggS, loopLengthInSecond*4*22050)
+
+  musicPlayer, err = audio.NewPlayer(audioContext, s)
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  // Play the infinite-length stream. This never ends.
+  musicPlayer.Play()
 }
 
 type Mode int
