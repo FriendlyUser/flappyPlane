@@ -39,6 +39,7 @@ import (
 	raudio "github.com/hajimehoshi/ebiten/examples/resources/audio"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	resources "github.com/hajimehoshi/ebiten/examples/resources/images/flappy"
+	audio "github.com/FriendlyUser/flappyPlane/audio"
 	images "github.com/FriendlyUser/flappyPlane/images"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
@@ -70,6 +71,12 @@ const (
 	pipeStartOffsetX = 8
 	pipeIntervalX    = 8
 	pipeGapY         = 5
+
+	frameOX     = 0
+	frameOY     = 144
+	frameWidth  = 85
+	frameHeight = 74
+	frameNum    = 3
 )
 
 var (
@@ -78,6 +85,7 @@ var (
 	planesImage     *ebiten.Image
 	arcadeFont      font.Face
 	smallArcadeFont font.Face
+	count       = 0
 )
 
 func init() {
@@ -93,11 +101,11 @@ func init() {
 	}
 	tilesImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 
-	img, _, err = image.Decode(bytes.NewReader(images.planes_png))
+	img, _, err = image.Decode(bytes.NewReader(images.Planes_png))
 	if err != nil {
 		log.Fatal(err)
 	}
-	tilesImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	planesImage, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 }
 
 func init() {
@@ -212,7 +220,7 @@ func (g *Game) Update(screen *ebiten.Image) error {
 		g.x16 += 32
 		g.cameraX += 2
 		if jump() {
-			g.vy16 = -96
+			g.vy16 = -64
 			jumpPlayer.Rewind()
 			jumpPlayer.Play()
 		}
@@ -303,11 +311,10 @@ func (g *Game) hit() bool {
 	}
 	const (
 		gopherWidth  = 30
-		gopherHeight = 60
+		gopherHeight = 30
 	)
-	w, h := gopherImage.Size()
-	x0 := floorDiv(g.x16, 16) + (w-gopherWidth)/2
-	y0 := floorDiv(g.y16, 16) + (h-gopherHeight)/2
+	x0 := floorDiv(g.x16, 16) + (32-gopherWidth)/2
+	y0 := floorDiv(g.y16, 16) + (32-gopherHeight)/2
 	x1 := x0 + gopherWidth
 	y1 := y0 + gopherHeight
 	if y0 < -tileSize*4 {
@@ -388,14 +395,18 @@ func (g *Game) drawTiles(screen *ebiten.Image) {
 }
 
 func (g *Game) drawGopher(screen *ebiten.Image) {
+	count++
 	op := &ebiten.DrawImageOptions{}
-	w, h := gopherImage.Size()
+	w := 32 
+	h := 32
 	op.GeoM.Translate(-float64(w)/2.0, -float64(h)/2.0)
-	op.GeoM.Rotate(float64(g.vy16) / 96.0 * math.Pi / 6)
+	op.GeoM.Rotate(float64(g.vy16) / 164.0 * math.Pi / 6)
 	op.GeoM.Translate(float64(w)/2.0, float64(h)/2.0)
 	op.GeoM.Translate(float64(g.x16/16.0)-float64(g.cameraX), float64(g.y16/16.0)-float64(g.cameraY))
+	i := (count / 5) % frameNum
+	sx, sy := frameOX,i*frameHeight+frameOY
 	op.Filter = ebiten.FilterLinear
-	screen.DrawImage(gopherImage, op)
+	screen.DrawImage(planesImage.SubImage(image.Rect(sx, sy, sx+frameWidth, sy+frameHeight)).(*ebiten.Image), op)
 }
 
 func main() {
