@@ -14,7 +14,7 @@
 
 // +build example jsgo
 
-package main
+package flappyPlane
 
 import (
 	"bytes"
