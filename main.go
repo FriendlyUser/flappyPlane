@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // +build !debug
-package flappyPlane
+package main
 
 import (
 	"bytes"
