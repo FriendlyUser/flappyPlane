@@ -1,3 +1,5 @@
+[![Documentation](https://godoc.org/github.com/FriendlyUser/flappyPlane?status.svg)](https://godoc.org/github.com/FriendlyUser/flappyPlane)
+
 # flappyPlane
 Flappy Plane Game
 
